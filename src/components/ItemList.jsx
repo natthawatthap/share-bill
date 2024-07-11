@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addItem, editItem, deleteItem } from "../features/items/itemsSlice";
 import ItemListItem from "./ItemListItem";
 import "./ItemList.css"; // Import CSS file for styling
+import SummaryTotalPerName from "../components/SummaryTotalPerName"; 
+import TotalPriceSum from "../components/TotalPriceSum"; 
 
 const ItemList = () => {
   const [newItem, setNewItem] = useState({
@@ -119,6 +121,8 @@ const ItemList = () => {
           ))}
         </tbody>
       </table>
+      <SummaryTotalPerName nameList={nameList} items={items} handleTagClick={handleTagClick} />
+      <TotalPriceSum items={items} />
     </div>
   );
 };
