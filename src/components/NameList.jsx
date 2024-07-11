@@ -1,18 +1,21 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addName, editName, deleteName } from "../features/names/namesSlice";
 import NameListItem from "./NameListItem";
+import "./NameList.css"; // Import CSS file for styling
 
-const NameList = ({ nameList, setNameList }) => {
+const NameList = () => {
   const [newName, setNewName] = useState("");
+  const nameList = useSelector((state) => state.names);
+  const dispatch = useDispatch();
 
   const handleCreateName = () => {
-    if (newName.trim()) {
-      setNameList([...nameList, newName.trim()]);
-      setNewName(""); // Clear newName after adding
-    }
+    dispatch(addName(newName));
+    setNewName(""); // Clear newName after adding
   };
 
   return (
-    <div>
+    <div className="name-list-container">
       <h1>Names List</h1>
       <table>
         <thead>
@@ -40,8 +43,8 @@ const NameList = ({ nameList, setNameList }) => {
               key={index}
               index={index}
               name={name}
-              nameList={nameList}
-              setNameList={setNameList}
+              editName={(newName) => dispatch(editName({ index, newName }))}
+              deleteName={() => dispatch(deleteName(index))}
             />
           ))}
         </tbody>

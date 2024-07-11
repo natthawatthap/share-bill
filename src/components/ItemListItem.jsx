@@ -1,48 +1,31 @@
 import React, { useState } from "react";
 
-const ItemListItem = ({ index, item, items, setItems, nameList, handleTagClick }) => {
-  const [editItem, setEditItem] = useState({
-    name: "",
-    price: "",
-    amount: "",
-    tags: [],
-  });
-  const [editItemIndex, setEditItemIndex] = useState(null);
+const ItemListItem = ({ index, item, editItem, deleteItem, nameList, handleTagClick }) => {
+  const [editItemValue, setEditItemValue] = useState(item);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleEditItem = (index) => {
-    setEditItemIndex(index); // Set the index of the item being edited
-    setEditItem(items[index]); // Set editItem to current item being edited
+  const handleEdit = () => {
+    setIsEditing(true);
   };
 
-  const handleSaveEditItem = () => {
-    if (
-      editItem.name.trim() &&
-      editItem.price.trim() &&
-      editItem.amount.trim()
-    ) {
-      const updatedItems = [...items];
-      updatedItems[editItemIndex] = { ...editItem, tags: [...editItem.tags] };
-      setItems(updatedItems);
-      setEditItemIndex(null); // Clear editItemIndex after save
-      setEditItem({ name: "", price: "", amount: "", tags: [] }); // Clear editItem state after save
-    }
+  const handleSave = () => {
+    editItem(index, editItemValue);
+    setIsEditing(false);
   };
 
-  const handleCancelEditItem = () => {
-    setEditItemIndex(null); // Clear editItemIndex to cancel edit mode
-    setEditItem({ name: "", price: "", amount: "", tags: [] }); // Clear editItem state
+  const handleCancel = () => {
+    setEditItemValue(item);
+    setIsEditing(false);
   };
 
-  const handleDeleteItem = (index) => {
-    const updatedItems = [...items];
-    updatedItems.splice(index, 1);
-    setItems(updatedItems);
+  const handleDelete = () => {
+    deleteItem(index);
   };
 
   const handleEditItemChange = (e) => {
     const { name, value } = e.target;
-    setEditItem({
-      ...editItem,
+    setEditItemValue({
+      ...editItemValue,
       [name]: value,
     });
   };
@@ -50,11 +33,11 @@ const ItemListItem = ({ index, item, items, setItems, nameList, handleTagClick }
   return (
     <tr>
       <td>
-        {editItemIndex === index ? (
+        {isEditing ? (
           <input
             type="text"
             name="name"
-            value={editItem.name}
+            value={editItemValue.name}
             onChange={handleEditItemChange}
             placeholder="Enter item name"
           />
@@ -63,11 +46,11 @@ const ItemListItem = ({ index, item, items, setItems, nameList, handleTagClick }
         )}
       </td>
       <td>
-        {editItemIndex === index ? (
+        {isEditing ? (
           <input
             type="text"
             name="price"
-            value={editItem.price}
+            value={editItemValue.price}
             onChange={handleEditItemChange}
             placeholder="Enter item price"
           />
@@ -76,11 +59,11 @@ const ItemListItem = ({ index, item, items, setItems, nameList, handleTagClick }
         )}
       </td>
       <td>
-        {editItemIndex === index ? (
+        {isEditing ? (
           <input
             type="text"
             name="amount"
-            value={editItem.amount}
+            value={editItemValue.amount}
             onChange={handleEditItemChange}
             placeholder="Enter item amount"
           />
@@ -89,14 +72,14 @@ const ItemListItem = ({ index, item, items, setItems, nameList, handleTagClick }
         )}
       </td>
       <td>
-        {editItemIndex === index ? (
+        {isEditing ? (
           nameList.map((name, idx) => (
             <button
               key={idx}
               className={
-                editItem.tags.includes(name) ? "tag selected" : "tag"
+                editItemValue.tags.includes(name) ? "tag selected" : "tag"
               }
-              onClick={() => handleTagClick(name, true, setEditItem, editItem)}
+              onClick={() => handleTagClick(name, true, setEditItemValue, editItemValue)}
             >
               {name}
             </button>
@@ -110,15 +93,15 @@ const ItemListItem = ({ index, item, items, setItems, nameList, handleTagClick }
         )}
       </td>
       <td>
-        {editItemIndex === index ? (
+        {isEditing ? (
           <>
-            <button onClick={handleSaveEditItem}>Save</button>
-            <button onClick={handleCancelEditItem}>Cancel</button>
+            <button onClick={handleSave}>Save</button>
+            <button onClick={handleCancel}>Cancel</button>
           </>
         ) : (
           <>
-            <button onClick={() => handleEditItem(index)}>Edit</button>
-            <button onClick={() => handleDeleteItem(index)}>Delete</button>
+            <button onClick={handleEdit}>Edit</button>
+            <button onClick={handleDelete}>Delete</button>
           </>
         )}
       </td>

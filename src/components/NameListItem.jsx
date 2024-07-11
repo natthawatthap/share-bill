@@ -1,63 +1,46 @@
 import React, { useState } from "react";
 
-const NameListItem = ({ index, name, nameList, setNameList }) => {
-  const [editName, setEditName] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
+const NameListItem = ({ index, name, editName, deleteName }) => {
+  const [editMode, setEditMode] = useState(false);
+  const [editedName, setEditedName] = useState(name);
 
-  const handleEditName = (index) => {
-    setEditIndex(index); // Set editIndex to current index for editing
-    setEditName(nameList[index]); // Set editName to current name for editing
+  const handleEdit = () => {
+    setEditMode(true);
   };
 
-  const handleSaveEditName = () => {
-    if (editName.trim() && editIndex !== null) {
-      const updatedNames = [...nameList];
-      updatedNames[editIndex] = editName.trim();
-      setNameList(updatedNames);
-      setEditIndex(null); // Clear editIndex after update
-      setEditName(""); // Clear editName after updating
-    }
+  const handleSave = () => {
+    editName(editedName);
+    setEditMode(false);
   };
 
-  const handleCancelEditName = () => {
-    setEditIndex(null); // Clear editIndex to cancel edit mode
-    setEditName(""); // Clear editName state
-  };
-
-  const handleDeleteName = (index) => {
-    const updatedNames = [...nameList];
-    updatedNames.splice(index, 1);
-    setNameList(updatedNames);
-    setEditIndex(null); // Clear editIndex if deleting
-  };
-
-  const handleInputChange = (e) => {
-    setEditName(e.target.value); // Update editName state
+  const handleCancel = () => {
+    setEditedName(name);
+    setEditMode(false);
   };
 
   return (
     <tr>
       <td>
-        {editIndex === index ? (
+        {editMode ? (
           <input
             type="text"
-            value={editName}
-            onChange={handleInputChange}
+            value={editedName}
+            onChange={(e) => setEditedName(e.target.value)}
           />
         ) : (
           name
         )}
       </td>
       <td>
-        {editIndex === index ? (
+        {editMode ? (
           <>
-            <button onClick={handleSaveEditName}>Save</button>
-            <button onClick={handleCancelEditName}>Cancel</button>
+            <button onClick={handleSave}>Save</button>
+            <button onClick={handleCancel}>Cancel</button>
           </>
         ) : (
           <>
-            <button onClick={() => handleEditName(index)}>Edit</button>
-            <button onClick={() => handleDeleteName(index)}>Delete</button>
+            <button onClick={handleEdit}>Edit</button>
+            <button onClick={deleteName}>Delete</button>
           </>
         )}
       </td>
